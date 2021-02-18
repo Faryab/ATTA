@@ -21,8 +21,10 @@ import adv_attack
 parser = argparse.ArgumentParser(description='PyTorch MNIST TRADES Adversarial Training')
 parser.add_argument('--batch-size', type=int, default=128, metavar='N',
                     help='input batch size for training (default: 128)')
-parser.add_argument('--epochs', type=int, default=60, metavar='N',
+parser.add_argument('--epochs', type=int, default=50, metavar='N',
                     help='number of epochs to train')
+parser.add_argument('--accum-epoch', type=int, default=49, metavar='N',
+                    help='when to start accumulating')
 parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
                     help='learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, metavar='M',
@@ -146,9 +148,8 @@ def train(args, model, device, mnist_nat_x, mnist_x, mnist_y, optimizer, epoch):
         loss.backward()
         optimizer.step()
 
-        m = 1
         # only accumulate after n - m + 1 epochs
-        if (epoch > args.epochs - m + 1):
+        if (epoch > args.accum-epoch):
             mnist_x[cur_order[batch_idx:min(num_of_example, batch_idx + batch_size)]] = x_adv_next
 
         # print progress
